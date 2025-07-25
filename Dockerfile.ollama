@@ -1,0 +1,15 @@
+# Use the official Ollama image as a base
+# This version does NOT pre-load any models.
+# Models will be pulled on-demand and stored in the mounted GCS volume.
+FROM ollama/ollama
+
+# Expose the port Ollama listens on
+EXPOSE 11434
+
+# Set the host to 0.0.0.0 to be accessible from outside the container
+ENV OLLAMA_HOST=0.0.0.0
+# Set the location for models to the GCS bucket mount point
+ENV OLLAMA_MODELS=/models
+
+# The command to run when the container starts
+CMD ["serve"]
