@@ -92,6 +92,9 @@ Write-Host "`n=== Deploying to Cloud Run ===" -ForegroundColor Green
 $serviceName = "gnosis-ollama"
 Write-Host "Deploying service '$serviceName' to Cloud Run..." -ForegroundColor White
 
+# Build the environment variable string separately for reliability
+$envVarString = ($envConfig.GetEnumerator() | ForEach-Object { "$($_.Key)=$($_.Value)" }) -join ","
+
 $deployArgs = @(
     "run", "deploy", $serviceName,
     "--image", $gcrImage,
@@ -111,9 +114,9 @@ $deployArgs = @(
     "--port", "11434",
     "--timeout", "3600",
     "--service-account", $serviceAccount,
-    --add-volume "name=model-cache,type=cloud-storage,bucket=$modelBucket",
+    "--add-volume", "name=model-cache,type=cloud-storage,bucket=$modelBucket",
     "--add-volume-mount", "volume=model-cache,mount-path=/models",
-    "--set-env-vars", ($envConfig.GetEnumerator() | ForEach-Object { "$($_.Key)=$($_.Value)" }) -join ","
+    "--set-env-vars", $envVarString
 )
 
 & gcloud @deployArgs
