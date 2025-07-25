@@ -113,7 +113,8 @@ gcloud run deploy "$SERVICE_NAME" \
     --cpu-boost \
     --service-account "$SERVICE_ACCOUNT" \
     --add-volume "name=model-cache,type=cloud-storage,bucket=$MODEL_BUCKET" \
-    --add-volume-mount "volume=model-cache,mount-path=/models"
+    --add-volume-mount "volume=model-cache,mount-path=/models" \
+    --set-env-vars "$(grep -v '^#' "$ENV_FILE" | sed -e 's/export //g' | tr '\n' ',' | sed 's/,$//')"
 
 SERVICE_URL=$(gcloud run services describe "$SERVICE_NAME" --region="$REGION" --format="value(status.url)")
 echo "✓ CLOUD RUN DEPLOYMENT SUCCESSFUL!"

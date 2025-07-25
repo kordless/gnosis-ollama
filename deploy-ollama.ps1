@@ -111,8 +111,9 @@ $deployArgs = @(
     "--port", "11434",
     "--timeout", "3600",
     "--service-account", $serviceAccount,
-    "--add-volume", "name=model-cache,type=cloud-storage,bucket=$modelBucket",
-    "--add-volume-mount", "volume=model-cache,mount-path=/models"
+    --add-volume "name=model-cache,type=cloud-storage,bucket=$modelBucket",
+    "--add-volume-mount", "volume=model-cache,mount-path=/models",
+    "--set-env-vars", ($envConfig.GetEnumerator() | ForEach-Object { "$($_.Key)=$($_.Value)" }) -join ","
 )
 
 & gcloud @deployArgs
